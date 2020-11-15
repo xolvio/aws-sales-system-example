@@ -1,0 +1,75 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "settings": {
+    "import/resolver": {
+      "typescript": {}
+    }
+  },
+  "ignorePatterns": [
+    "node_modules/",
+    "generated/**/*.ts",
+    "cdk.out/"
+  ],
+  "extends": [
+    "airbnb-typescript/base",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:jest/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "plugins": [
+    "@typescript-eslint",
+    "import",
+    "monorepo",
+    "jest",
+    "prettier"
+  ],
+  "rules": {
+    "import/no-unresolved": "error",
+    "import/no-extraneous-dependencies": [
+      "warn",
+      {
+        "devDependencies": [
+          "**/*.spec.tsx",
+          "**/*.spec.ts",
+          "**/features/**/*.ts"
+        ]
+      }
+    ],
+    "prettier/prettier": "error",
+    "import/prefer-default-export": 0,
+    "@typescript-eslint/member-delimiter-style": 0,
+    "@typescript-eslint/semi": 0,
+    "@typescript-eslint/space-before-function-paren": 0,
+    "@typescript-eslint/indent": 0,
+    "@typescript-eslint/quotes": 0,
+    "no-underscore-dangle": 0,
+    "@typescript-eslint/interface-name-prefix": 0,
+    "@typescript-eslint/no-empty-interface": 0,
+    "no-cond-assign": [
+      "error",
+      "except-parens"
+    ],
+    "max-classes-per-file": 0,
+    "lines-between-class-members": 0,
+    "import/no-cycle": "warn",
+    "monorepo/no-relative-import": "error",
+    "@typescript-eslint/comma-dangle": 0
+  },
+  "env": {
+    "browser": true,
+    "jest": true
+  },
+  "overrides": [
+    {
+      "files": "**/*.js",
+      "rules": {
+        "@typescript-eslint/no-var-requires": 0
+      }
+    }
+  ]
+}
