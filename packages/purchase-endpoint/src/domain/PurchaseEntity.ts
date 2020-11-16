@@ -1,4 +1,4 @@
-import { generateId } from "../helpers/generateId";
+import { generateId } from "@sales/shared/src/generateId";
 
 export class PurchaseEntity {
   constructor(

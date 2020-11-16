@@ -249,8 +249,13 @@ export class NodejsFunction extends lambda.Function {
     //   console.error('webpack configuration was:', webpackConfiguration)
     // }
 
-    fs.unlinkSync(webpackConfigPath);
+    // fs.unlinkSync(webpackConfigPath);
 
+    console.log(
+      "GOZDECKI webpackConfigPath, process.cwd()",
+      webpackConfigPath,
+      process.cwd()
+    );
     // this is incorrectly typed in shelljs, the array returns an object
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
