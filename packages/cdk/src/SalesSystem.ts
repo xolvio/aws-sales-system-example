@@ -8,7 +8,7 @@ import { HttpApi } from "@aws-cdk/aws-apigatewayv2";
 import { PurchasesHistoryTableDefinition } from "@sales/purchase-endpoint/src/domain/purchases-history-table-definition";
 import { NodejsFunction } from "../webpackLambdaBundle";
 
-const createPurchaseEndpoint = (scope: Stack, paymentServiceUrl: string) => {
+const createPurchaseEndpoints = (scope: Stack, paymentServiceUrl: string) => {
   const cfn = new dynamodb.CfnTable(scope, "Purchases", {
     ...PurchasesHistoryTableDefinition,
   });
@@ -17,29 +17,50 @@ const createPurchaseEndpoint = (scope: Stack, paymentServiceUrl: string) => {
     tableArn: cfn.attrArn,
   });
 
-  const handle = new NodejsFunction(scope, "Purchase-Endpoint", {
+  const statusHandle = new NodejsFunction(scope, "Purchase-Status-Endpoint", {
+    entry: require.resolve("@sales/purchase-endpoint/src/handler.ts"),
+    runtime: lambda.Runtime.NODEJS_12_X,
+    environment: {
+      PURCHASES_HISTORY: table.tableName,
+    },
+  });
+
+  const statusApi = new HttpApi(scope, "PurchaseStatusHttpApi", {
+    defaultIntegration: new apiGateway2.LambdaProxyIntegration({
+      handler: statusHandle,
+    }),
+  });
+
+  table.grantReadWriteData(statusHandle);
+
+  const purchaseHandle = new NodejsFunction(scope, "Purchase-Endpoint", {
     entry: require.resolve("@sales/purchase-endpoint/src/handler.ts"),
     runtime: lambda.Runtime.NODEJS_12_X,
     environment: {
       PAYMENT_SERVICE_URL: paymentServiceUrl,
       PURCHASES_HISTORY: table.tableName,
+      STATUS_URL: statusApi.url,
     },
   });
 
-  table.grantReadWriteData(handle);
+  table.grantReadWriteData(purchaseHandle);
 
-  const httpApi = new HttpApi(scope, "PurchaseHttpApi", {
+  const purchaseApi = new HttpApi(scope, "PurchaseHttpApi", {
     defaultIntegration: new apiGateway2.LambdaProxyIntegration({
-      handler: handle,
+      handler: purchaseHandle,
     }),
   });
 
   new CfnOutput(scope, "purchaseUrl", {
-    value: httpApi.url,
+    value: purchaseApi.url,
+  });
+
+  new CfnOutput(scope, "statusUrl", {
+    value: statusApi.url,
   });
 
   new CfnOutput(scope, "purchaseFunctionName", {
-    value: handle.functionName,
+    value: purchaseHandle.functionName,
   });
 };
 
@@ -66,6 +87,6 @@ export class SalesSystem extends Stack {
   constructor(scope: App, id: string) {
     super(scope, id);
     const { paymentServiceUrl } = createPaymentService(this);
-    createPurchaseEndpoint(this, paymentServiceUrl);
+    createPurchaseEndpoints(this, paymentServiceUrl);
   }
 }

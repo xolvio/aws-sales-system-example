@@ -3,7 +3,12 @@ import { returnLambdaError } from "@sales/shared/src/returnLambdaError";
 import { purchaseAction } from "./purchase-action";
 import { PurchasesHistoryRepository } from "./domain/purchases-history-table";
 
-export const handler: APIGatewayProxyHandlerV2 = async (event) => {
+type PurchaseResponse = {
+  purchaseId: string;
+};
+export const handler: APIGatewayProxyHandlerV2<PurchaseResponse> = async (
+  event
+) => {
   try {
     return await purchaseAction(
       event.queryStringParameters.userId,
