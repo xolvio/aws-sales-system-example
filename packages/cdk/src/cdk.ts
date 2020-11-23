@@ -7,4 +7,4 @@ const baseStackName = "SalesSystemExample";
 
 const app = new cdk.App();
 
-new SalesSystem(app, baseStackName);
+export default new SalesSystem(app, baseStackName);

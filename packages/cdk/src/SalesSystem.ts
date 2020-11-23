@@ -1,12 +1,11 @@
 /* eslint-disable no-new */
 import * as lambda from "@aws-cdk/aws-lambda";
-import * as apiGateway from "@aws-cdk/aws-apigateway";
 import * as apiGateway2 from "@aws-cdk/aws-apigatewayv2";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
 import { App, CfnOutput, Stack } from "@aws-cdk/core";
 import { HttpApi } from "@aws-cdk/aws-apigatewayv2";
+import { TypeScriptFunction } from "cdk-typescript-tooling";
 import { PurchasesHistoryTableDefinition } from "@sales/purchase-endpoint/src/domain/purchases-history-table-definition";
-import { NodejsFunction } from "../webpackLambdaBundle";
 
 const createPurchaseEndpoints = (scope: Stack, paymentServiceUrl: string) => {
   const cfn = new dynamodb.CfnTable(scope, "Purchases", {
@@ -17,13 +16,17 @@ const createPurchaseEndpoints = (scope: Stack, paymentServiceUrl: string) => {
     tableArn: cfn.attrArn,
   });
 
-  const statusHandle = new NodejsFunction(scope, "Purchase-Status-Endpoint", {
-    entry: require.resolve("@sales/purchase-endpoint/src/handler.ts"),
-    runtime: lambda.Runtime.NODEJS_12_X,
-    environment: {
-      PURCHASES_HISTORY: table.tableName,
-    },
-  });
+  const statusHandle = new TypeScriptFunction(
+    scope,
+    "Purchase-Status-Endpoint",
+    {
+      entry: require.resolve("@sales/purchase-endpoint/src/handler.ts"),
+      runtime: lambda.Runtime.NODEJS_12_X,
+      environment: {
+        PURCHASES_HISTORY: table.tableName,
+      },
+    }
+  );
 
   const statusApi = new HttpApi(scope, "PurchaseStatusHttpApi", {
     defaultIntegration: new apiGateway2.LambdaProxyIntegration({
@@ -33,7 +36,7 @@ const createPurchaseEndpoints = (scope: Stack, paymentServiceUrl: string) => {
 
   table.grantReadWriteData(statusHandle);
 
-  const purchaseHandle = new NodejsFunction(scope, "Purchase-Endpoint", {
+  const purchaseHandle = new TypeScriptFunction(scope, "Purchase-Endpoint", {
     entry: require.resolve("@sales/purchase-endpoint/src/handler.ts"),
     runtime: lambda.Runtime.NODEJS_12_X,
     environment: {
@@ -65,7 +68,7 @@ const createPurchaseEndpoints = (scope: Stack, paymentServiceUrl: string) => {
 };
 
 function createPaymentService(scope: Stack) {
-  const handle = new NodejsFunction(scope, "Payment-Service", {
+  const handle = new TypeScriptFunction(scope, "Payment-Service", {
     entry: require.resolve("@sales/payment-service/src/handler.ts"),
     runtime: lambda.Runtime.NODEJS_12_X,
   });
