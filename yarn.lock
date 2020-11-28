@@ -2,6 +2,17 @@
 # yarn lockfile v1
 
 
+"@aws-cdk/assert@1.64.1":
+  version "1.64.1"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/assert/-/assert-1.64.1.tgz#c977a5ef856b67a79d42a4b20b7e9c378a3ee0f5"
+  integrity sha512-BbiJvaapBoCJR0KvB5b/lEZxfxBceBufYDt0xGJlYKkjM+j271sLT44GRzgTwNMeCL0GiLDnJwb4asNhdSjPDA==
+  dependencies:
+    "@aws-cdk/cloud-assembly-schema" "1.64.1"
+    "@aws-cdk/cloudformation-diff" "1.64.1"
+    "@aws-cdk/core" "1.64.1"
+    "@aws-cdk/cx-api" "1.64.1"
+    constructs "^3.0.4"
+
 "@aws-cdk/assets@1.64.1":
   version "1.64.1"
   resolved "https://registry.yarnpkg.com/@aws-cdk/assets/-/assets-1.64.1.tgz#01689fc9f4ed548fa8078a9835a6fd9b85c7646b"
@@ -442,6 +453,18 @@
     "@aws-cdk/cx-api" "1.64.1"
     constructs "^3.0.4"
 
+"@aws-cdk/aws-logs-destinations@1.64.1":
+  version "1.64.1"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-logs-destinations/-/aws-logs-destinations-1.64.1.tgz#3d6afc8f75af22dc1bb9685307334abdb30a46dd"
+  integrity sha512-rmZ7Yt0l/WwoSB7nmTNfpUl2/aKQ4797vIxKuus0XB/XqTWE4nCnHZqfUGmaCgvYgxaW+K53/31oP6DYgUB6TQ==
+  dependencies:
+    "@aws-cdk/aws-iam" "1.64.1"
+    "@aws-cdk/aws-kinesis" "1.64.1"
+    "@aws-cdk/aws-lambda" "1.64.1"
+    "@aws-cdk/aws-logs" "1.64.1"
+    "@aws-cdk/core" "1.64.1"
+    constructs "^3.0.4"
+
 "@aws-cdk/aws-logs@1.64.1":
   version "1.64.1"
   resolved "https://registry.yarnpkg.com/@aws-cdk/aws-logs/-/aws-logs-1.64.1.tgz#ea97df7ac1d43cbd61a8c0a4923fcf6d16db0da5"
@@ -610,6 +633,13 @@
     "@aws-cdk/core" "1.64.1"
     constructs "^3.0.4"
 
+"@aws-cdk/cfnspec@1.64.1":
+  version "1.64.1"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/cfnspec/-/cfnspec-1.64.1.tgz#e6cac66cc7dfee901439a2c00aeaabdf9c00bd9d"
+  integrity sha512-cyY66HQsD26zBLNApbqwStDxa9cBcBtvaYogsQ7ObQuPKR1mZmCHQlK0gRAzYK0i8s55nsQkQzU805ioDP5u1g==
+  dependencies:
+    md5 "^2.3.0"
+
 "@aws-cdk/cfnspec@1.73.0":
   version "1.73.0"
   resolved "https://registry.yarnpkg.com/@aws-cdk/cfnspec/-/cfnspec-1.73.0.tgz#8adbd94ff0538c2959c744d2e992208610a1efa7"
@@ -632,6 +662,18 @@
   dependencies:
     jsonschema "^1.4.0"
     semver "^7.3.2"
+
+"@aws-cdk/cloudformation-diff@1.64.1":
+  version "1.64.1"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/cloudformation-diff/-/cloudformation-diff-1.64.1.tgz#44473860d29ef9c2d0639b267bd3893aa7ddc820"
+  integrity sha512-Kcd6il1XQTPMNE7X+7MqmjONYFn8X9YxZiv15gmBsw0U79o3IbJpNTUg3xNJ0GOEYycx3ziCnevhMJM3lABFoQ==
+  dependencies:
+    "@aws-cdk/cfnspec" "1.64.1"
+    colors "^1.4.0"
+    diff "^4.0.2"
+    fast-deep-equal "^3.1.3"
+    string-width "^4.2.0"
+    table "^6.0.3"
 
 "@aws-cdk/cloudformation-diff@1.73.0":
   version "1.73.0"
@@ -2568,11 +2610,12 @@ cdk-assets@1.73.0:
     glob "^7.1.6"
     yargs "^16.1.0"
 
-cdk-typescript-tooling@1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/cdk-typescript-tooling/-/cdk-typescript-tooling-1.1.1.tgz#51e389e5ecc6252872bb929d88c0d205e063cecb"
-  integrity sha512-owTgS2SjdTgVY1D+DMCvF6XRYEFJmFjT32YGedWLmiyNO8kvTqnDXWP/7M1s+meFmb8bqlc2ee7oDFYBNjbmOg==
+cdk-typescript-tooling@1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/cdk-typescript-tooling/-/cdk-typescript-tooling-1.5.0.tgz#573cdbbcbd041abee686e622ac5c97dbb56fb3a7"
+  integrity sha512-3xqzOkJpUDUBmJekAFt+D9BplyFWd5FSpvPr7gyFYRr8+KUBa5e6gH7cCd1PMt0KMvs7+01PXrhajf4vlhiI0Q==
   dependencies:
+    "@aws-cdk/assert" "1.64.1"
     "@types/shelljs" "0.8.8"
     find-up "5.0.0"
     shelljs "0.8.4"
@@ -3104,7 +3147,7 @@ diff-sequences@^26.6.2:
   resolved "https://registry.yarnpkg.com/diff-sequences/-/diff-sequences-26.6.2.tgz#48ba99157de1923412eed41db6b6d4aa9ca7c0b1"
   integrity sha512-Mv/TDa3nZ9sbc5soK+OoA74BsS3mL37yixCvUAQkiuA4Wz6YtwP/K47n2rv2ovzHZvoiQeA5FTQOschKkEwB0Q==
 
-diff@^4.0.1:
+diff@^4.0.1, diff@^4.0.2:
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/diff/-/diff-4.0.2.tgz#60f3aecb89d5fae520c11aa19efc2bb982aade7d"
   integrity sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==

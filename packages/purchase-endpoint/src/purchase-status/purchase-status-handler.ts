@@ -1,6 +1,6 @@
 import { APIGatewayProxyHandlerV2 } from "aws-lambda";
 import { returnLambdaError } from "@sales/shared/src/returnLambdaError";
-import { PurchasesHistoryRepository } from "./domain/purchases-history-table";
+import { PurchasesHistoryRepository } from "../domain/purchases-history-table";
 
 type StatusResponse = {
   finished: boolean;

@@ -20,7 +20,9 @@ const createPurchaseEndpoints = (scope: Stack, paymentServiceUrl: string) => {
     scope,
     "Purchase-Status-Endpoint",
     {
-      entry: require.resolve("@sales/purchase-endpoint/src/handler.ts"),
+      entry: require.resolve(
+        "@sales/purchase-endpoint/src/purchase-status/purchase-status-handler.ts"
+      ),
       runtime: lambda.Runtime.NODEJS_12_X,
       environment: {
         PURCHASES_HISTORY: table.tableName,
@@ -36,21 +38,33 @@ const createPurchaseEndpoints = (scope: Stack, paymentServiceUrl: string) => {
 
   table.grantReadWriteData(statusHandle);
 
-  const purchaseHandle = new TypeScriptFunction(scope, "Purchase-Endpoint", {
-    entry: require.resolve("@sales/purchase-endpoint/src/handler.ts"),
+  const purchaseAction = new TypeScriptFunction(scope, "Purchase-Action", {
+    entry: require.resolve(
+      "@sales/purchase-endpoint/src/purchase-action/purchase-action-handler.ts"
+    ),
     runtime: lambda.Runtime.NODEJS_12_X,
     environment: {
       PAYMENT_SERVICE_URL: paymentServiceUrl,
       PURCHASES_HISTORY: table.tableName,
+    },
+  });
+
+  table.grantReadWriteData(purchaseAction);
+
+  const purchaseEndpoint = new TypeScriptFunction(scope, "Purchase-Endpoint", {
+    entry: require.resolve(
+      "@sales/purchase-endpoint/src/purchase-endpoint/handler.ts"
+    ),
+    runtime: lambda.Runtime.NODEJS_12_X,
+    environment: {
+      PURCHASE_ACTION_LAMBDA: purchaseAction.functionName,
       STATUS_URL: statusApi.url,
     },
   });
 
-  table.grantReadWriteData(purchaseHandle);
-
   const purchaseApi = new HttpApi(scope, "PurchaseHttpApi", {
     defaultIntegration: new apiGateway2.LambdaProxyIntegration({
-      handler: purchaseHandle,
+      handler: purchaseEndpoint,
     }),
   });
 
@@ -63,7 +77,7 @@ const createPurchaseEndpoints = (scope: Stack, paymentServiceUrl: string) => {
   });
 
   new CfnOutput(scope, "purchaseFunctionName", {
-    value: purchaseHandle.functionName,
+    value: purchaseEndpoint.functionName,
   });
 };
 

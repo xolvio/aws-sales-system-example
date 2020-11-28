@@ -13,3 +13,5 @@ cdk.out
 cdk.context.json
 
 cdk-output.json
+
+.update-function-cache

@@ -1,0 +1,7 @@
+{
+  "name": "@sales/log-handler",
+  "version": "1.0.0",
+  "devDependencies": {
+    "aws-lambda": "1.0.6"
+  }
+}
