@@ -9,5 +9,5 @@ export const heavyAndFlakyProcessing = async (userId: string) =>
       } else {
         resolve(`Great success for ${userId}!`);
       }
-    }, 2000);
+    }, 50);
   });

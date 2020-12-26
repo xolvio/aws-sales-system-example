@@ -7,7 +7,6 @@ export const httpGet = async (
     let dataString = "";
     const req = https.get(url, function (res) {
       res.on("data", (chunk) => {
-        console.log("chunk", chunk);
         dataString += chunk;
       });
       res.on("end", () => {
