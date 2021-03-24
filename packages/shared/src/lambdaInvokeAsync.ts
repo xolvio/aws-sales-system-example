@@ -1,6 +1,9 @@
 import AWS from "aws-sdk";
 
-export const lambdaInvokeAsync = (FunctionName, payload) => {
+export const lambdaInvokeAsync = (
+  FunctionName: string,
+  payload: Record<string, unknown>
+) => {
   const lambda = new AWS.Lambda();
 
   if (!FunctionName) {

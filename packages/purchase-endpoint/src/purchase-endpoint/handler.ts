@@ -3,6 +3,11 @@ import { returnLambdaError } from "@sales/shared/src/returnLambdaError";
 import { generateId } from "@sales/shared/src/generateId";
 import { lambdaInvokeAsync } from "@sales/shared/src/lambdaInvokeAsync";
 import type { PurchaseEvent } from "../purchase-action/purchase-action-handler";
+import {
+  AvailableLambdas,
+  getLambdaFunctionName,
+  getLambdaUrl,
+} from "../../../cdk/src/AvailableDependencies";
 
 type PurchaseResponse = {
   purchaseUrl: string;
@@ -19,10 +24,14 @@ export const handler: APIGatewayProxyHandlerV2<PurchaseResponse> = async (
 
   try {
     await lambdaInvokeAsync(
-      process.env.PURCHASE_ACTION_LAMBDA,
+      getLambdaFunctionName(AvailableLambdas.PURCHASE_ACTION),
       purchaseActionLambdaPayload
     );
-    return { purchaseUrl: `${process.env.STATUS_URL}/${purchaseId}` };
+    return {
+      purchaseUrl: `${getLambdaUrl(
+        AvailableLambdas.STATUS
+      )}?purchaseId=${purchaseId}`,
+    };
   } catch (e) {
     return returnLambdaError(e.message);
   }

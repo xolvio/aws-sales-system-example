@@ -3,7 +3,7 @@
 import * as cdk from "@aws-cdk/core";
 import { SalesSystem } from "./SalesSystem";
 
-const baseStackName = "SalesSystemExample";
+const baseStackName = "SalesSystemExampleDatabases";
 
 const app = new cdk.App();
 

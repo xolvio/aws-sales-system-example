@@ -1,109 +1,56 @@
 /* eslint-disable no-new */
-import * as lambda from "@aws-cdk/aws-lambda";
-import * as apiGateway2 from "@aws-cdk/aws-apigatewayv2";
-import * as dynamodb from "@aws-cdk/aws-dynamodb";
-import { App, CfnOutput, Stack } from "@aws-cdk/core";
-import { HttpApi } from "@aws-cdk/aws-apigatewayv2";
-import { TypeScriptFunction } from "cdk-typescript-tooling";
-import { PurchasesHistoryTableDefinition } from "@sales/purchase-endpoint/src/domain/purchases-history-table-definition";
+import { App, Stack } from "@aws-cdk/core";
+import { runAfter } from "cdk-typescript-tooling";
+import { createPurchasesHistoryTable } from "./createPurchasesHistoryTable";
+import { AvailableLambdas, AvailableTables } from "./AvailableDependencies";
+import {
+  TypeScriptFunctionWithLambdas,
+  addLambdas,
+  addTables,
+} from "./TypeScriptFunctionWrapper";
 
-const createPurchaseEndpoints = (scope: Stack, paymentServiceUrl: string) => {
-  const cfn = new dynamodb.CfnTable(scope, "Purchases", {
-    ...PurchasesHistoryTableDefinition,
+const createPurchaseEndpoints = (scope: Stack) => {
+  new TypeScriptFunctionWithLambdas(scope, AvailableLambdas.STATUS, {
+    entry: require.resolve(
+      "@sales/purchase-endpoint/src/purchase-status/purchase-status-handler.ts"
+    ),
+    addDependencies: [addTables(AvailableTables.PURCHASES_HISTORY)],
+    withHttp: true,
   });
 
-  const table = dynamodb.Table.fromTableAttributes(scope, "Purchases-Table", {
-    tableArn: cfn.attrArn,
-  });
-
-  const statusHandle = new TypeScriptFunction(
-    scope,
-    "Purchase-Status-Endpoint",
-    {
-      entry: require.resolve(
-        "@sales/purchase-endpoint/src/purchase-status/purchase-status-handler.ts"
-      ),
-      runtime: lambda.Runtime.NODEJS_12_X,
-      environment: {
-        PURCHASES_HISTORY: table.tableName,
-      },
-    }
-  );
-
-  const statusApi = new HttpApi(scope, "PurchaseStatusHttpApi", {
-    defaultIntegration: new apiGateway2.LambdaProxyIntegration({
-      handler: statusHandle,
-    }),
-  });
-
-  table.grantReadWriteData(statusHandle);
-
-  const purchaseAction = new TypeScriptFunction(scope, "Purchase-Action", {
+  new TypeScriptFunctionWithLambdas(scope, AvailableLambdas.PURCHASE_ACTION, {
     entry: require.resolve(
       "@sales/purchase-endpoint/src/purchase-action/purchase-action-handler.ts"
     ),
-    runtime: lambda.Runtime.NODEJS_12_X,
-    environment: {
-      PAYMENT_SERVICE_URL: paymentServiceUrl,
-      PURCHASES_HISTORY: table.tableName,
-    },
+    addDependencies: [
+      addTables(AvailableTables.PURCHASES_HISTORY),
+      addLambdas(AvailableLambdas.PAYMENT_SERVICE),
+    ],
   });
 
-  table.grantReadWriteData(purchaseAction);
-
-  const purchaseEndpoint = new TypeScriptFunction(scope, "Purchase-Endpoint", {
+  new TypeScriptFunctionWithLambdas(scope, AvailableLambdas.PURCHASE_ENDPOINT, {
     entry: require.resolve(
       "@sales/purchase-endpoint/src/purchase-endpoint/handler.ts"
     ),
-    runtime: lambda.Runtime.NODEJS_12_X,
-    environment: {
-      PURCHASE_ACTION_LAMBDA: purchaseAction.functionName,
-      STATUS_URL: statusApi.url,
-    },
-  });
-
-  const purchaseApi = new HttpApi(scope, "PurchaseHttpApi", {
-    defaultIntegration: new apiGateway2.LambdaProxyIntegration({
-      handler: purchaseEndpoint,
-    }),
-  });
-
-  new CfnOutput(scope, "purchaseUrl", {
-    value: purchaseApi.url,
-  });
-
-  new CfnOutput(scope, "statusUrl", {
-    value: statusApi.url,
-  });
-
-  new CfnOutput(scope, "purchaseFunctionName", {
-    value: purchaseEndpoint.functionName,
+    addDependencies: [
+      addLambdas(AvailableLambdas.PURCHASE_ACTION, AvailableLambdas.STATUS),
+    ],
+    withHttp: true,
   });
 };
 
 function createPaymentService(scope: Stack) {
-  const handle = new TypeScriptFunction(scope, "Payment-Service", {
+  new TypeScriptFunctionWithLambdas(scope, AvailableLambdas.PAYMENT_SERVICE, {
     entry: require.resolve("@sales/payment-service/src/handler.ts"),
-    runtime: lambda.Runtime.NODEJS_12_X,
   });
-
-  const httpApi = new HttpApi(scope, "PaymentHttpApi", {
-    defaultIntegration: new apiGateway2.LambdaProxyIntegration({
-      handler: handle,
-    }),
-  });
-
-  new CfnOutput(scope, "paymentFunctionName", {
-    value: handle.functionName,
-  });
-
-  return { paymentServiceUrl: httpApi.url };
 }
 
 export class SalesSystem extends Stack {
   constructor(scope: App, id: string) {
     super(scope, id);
-    const { paymentServiceUrl } = createPaymentService(this);
-    createPurchaseEndpoints(this, paymentServiceUrl);
+    createPaymentService(this);
+    createPurchaseEndpoints(this);
+    createPurchasesHistoryTable(this);
+    runAfter();
   }
 }
