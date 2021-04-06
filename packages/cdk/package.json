@@ -20,7 +20,7 @@
     "@aws-cdk/core": "1.75.0",
     "aws-cdk": "1.73.0",
     "aws-sdk": "2.757.0",
-    "cdk-typescript-tooling": "3.0.0-alpha",
+    "cdk-typescript-tooling": "3.0.0-alpha.4",
     "find-up": "^5.0.0",
     "noop2": "^2.0.0",
     "shelljs": "0.8.4",

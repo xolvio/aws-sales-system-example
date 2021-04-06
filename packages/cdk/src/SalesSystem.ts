@@ -4,13 +4,13 @@ import { runAfter } from "cdk-typescript-tooling";
 import { createPurchasesHistoryTable } from "./createPurchasesHistoryTable";
 import { AvailableLambdas, AvailableTables } from "./AvailableDependencies";
 import {
-  TypeScriptFunctionWithLambdas,
+  ToolkitFunction,
   addLambdas,
   addTables,
 } from "./TypeScriptFunctionWrapper";
 
 const createPurchaseEndpoints = (scope: Stack) => {
-  new TypeScriptFunctionWithLambdas(scope, AvailableLambdas.STATUS, {
+  new ToolkitFunction(scope, AvailableLambdas.STATUS, {
     entry: require.resolve(
       "@sales/purchase-endpoint/src/purchase-status/purchase-status-handler.ts"
     ),
@@ -18,7 +18,7 @@ const createPurchaseEndpoints = (scope: Stack) => {
     withHttp: true,
   });
 
-  new TypeScriptFunctionWithLambdas(scope, AvailableLambdas.PURCHASE_ACTION, {
+  new ToolkitFunction(scope, AvailableLambdas.PURCHASE_ACTION, {
     entry: require.resolve(
       "@sales/purchase-endpoint/src/purchase-action/purchase-action-handler.ts"
     ),
@@ -28,7 +28,7 @@ const createPurchaseEndpoints = (scope: Stack) => {
     ],
   });
 
-  new TypeScriptFunctionWithLambdas(scope, AvailableLambdas.PURCHASE_ENDPOINT, {
+  new ToolkitFunction(scope, AvailableLambdas.PURCHASE_ENDPOINT, {
     entry: require.resolve(
       "@sales/purchase-endpoint/src/purchase-endpoint/handler.ts"
     ),
@@ -40,7 +40,7 @@ const createPurchaseEndpoints = (scope: Stack) => {
 };
 
 function createPaymentService(scope: Stack) {
-  new TypeScriptFunctionWithLambdas(scope, AvailableLambdas.PAYMENT_SERVICE, {
+  new ToolkitFunction(scope, AvailableLambdas.PAYMENT_SERVICE, {
     entry: require.resolve("@sales/payment-service/src/handler.ts"),
   });
 }
