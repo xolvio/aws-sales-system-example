@@ -1,6 +1,6 @@
 /* eslint-disable no-new */
 import { App, Stack } from "@aws-cdk/core";
-import { runAfter } from "cdk-typescript-tooling";
+import { initializeToolkitDependencies } from "cdk-typescript-tooling";
 import { createPurchasesHistoryTable } from "./createPurchasesHistoryTable";
 import { AvailableLambdas, AvailableTables } from "./AvailableDependencies";
 import {
@@ -51,6 +51,6 @@ export class SalesSystem extends Stack {
     createPaymentService(this);
     createPurchaseEndpoints(this);
     createPurchasesHistoryTable(this);
-    runAfter();
+    initializeToolkitDependencies();
   }
 }
