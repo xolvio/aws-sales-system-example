@@ -1,9 +1,5 @@
 import { DynamoDB } from "aws-sdk";
-import {
-  CreatedTable,
-  createTable,
-  generateRandomName,
-} from "dynamodb-testing-tool";
+import { createTable, generateRandomName } from "dynamodb-testing-tool";
 import { PurchasesHistoryRepository } from "./purchases-history-table";
 import { PurchaseEntity } from "./PurchaseEntity";
 import { PurchasesHistoryTableDefinitionSdk } from "./purchases-history-table-definition";

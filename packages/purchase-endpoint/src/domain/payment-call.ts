@@ -1,4 +1,4 @@
-import { httpGet } from "../helpers/httpGet";
+import { httpGet } from "@sales/shared/src/httpGet";
 
 const paymentServiceUrl = process.env.PAYMENT_SERVICE_URL;
 

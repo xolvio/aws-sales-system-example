@@ -1,5 +1,8 @@
 {
   "name": "@sales/payment-service",
   "version": "1.0.0",
-  "dependencies": {}
+  "dependencies": {
+    "@sales/shared": "1.0.0",
+    "aws-lambda": "1.0.6"
+  }
 }
